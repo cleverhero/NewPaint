@@ -1,0 +1,8 @@
+backup/*
+
+lib/*
+*.exe
+
+*.txt
+*.bmp
+*.lps

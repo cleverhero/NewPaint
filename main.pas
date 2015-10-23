@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Menus, Buttons, StdCtrls, About, UTools, UFigures, LCLType, UTransformation;
+  Menus, Buttons, StdCtrls, About, UTools, UFigures, LCLType, CheckLst,
+  UTransformation;
 
 type
 
@@ -16,6 +17,8 @@ type
     BtnClear: TButton;
     ColorBox: TComboBox;
     ColorLabel: TLabel;
+    ZoomBox: TComboBox;
+    ZoomLabel: TLabel;
     ScrollBarY: TScrollBar;
     ScrollBarX: TScrollBar;
     SizeLabel: TLabel;
@@ -46,6 +49,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure MouseMove(Sender: TObject;Shift: TShiftState;
       X, Y: Integer);
+    procedure ZoomBoxSelect(Sender: TObject);
   private
     Buttons:array of TBitBtn;
     ActiveBtn:TBitBtn;
@@ -188,6 +192,12 @@ begin
     Tools[ActiveBtn.Tag].MouseMove(Sender,Shift,X,Y);
     PaintBox.Invalidate;
   end;
+end;
+
+procedure TForm1.ZoomBoxSelect(Sender: TObject);
+begin
+  zoom:=100/strtoint(Copy(ZoomBox.Text,1,length(ZoomBox.Text)-1));
+  PaintBox.Invalidate;
 end;
 
 procedure TForm1.PaintBoxPaint(Sender: TObject);
