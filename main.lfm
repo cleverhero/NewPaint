@@ -1,11 +1,11 @@
 object Form1: TForm1
-  Left = 599
+  Left = 537
   Height = 520
-  Top = 187
-  Width = 920
+  Top = 215
+  Width = 1008
   Caption = 'Paint'
   ClientHeight = 495
-  ClientWidth = 920
+  ClientWidth = 1008
   KeyPreview = True
   Menu = MainMenu1
   OnCreate = FormCreate
@@ -14,33 +14,63 @@ object Form1: TForm1
   LCLVersion = '1.4.2.0'
   object PaintBox: TPaintBox
     Left = 134
-    Height = 428
+    Height = 474
     Top = 0
-    Width = 786
+    Width = 853
     Align = alClient
     OnPaint = PaintBoxPaint
   end
   object Panel: TPanel
     Left = 0
-    Height = 428
+    Height = 474
     Top = 0
     Width = 134
     Align = alLeft
+    ClientHeight = 474
+    ClientWidth = 134
     TabOrder = 0
-  end
-  object Settings: TPanel
-    Left = 0
-    Height = 67
-    Top = 428
-    Width = 920
-    Align = alBottom
-    ClientHeight = 67
-    ClientWidth = 920
-    TabOrder = 1
-    object SizeBox: TComboBox
-      Left = 40
+    object BtnClear: TButton
+      Left = 8
+      Height = 25
+      Top = 220
+      Width = 116
+      Caption = 'Очиcтить экран'
+      OnClick = BtnClearClick
+      TabOrder = 0
+    end
+    object ColorLabel: TLabel
+      Left = 8
+      Height = 20
+      Top = 368
+      Width = 52
+      AutoSize = False
+      Caption = 'Цвет'
+      ParentColor = False
+    end
+    object ColorBox: TComboBox
+      Left = 8
       Height = 28
-      Top = 28
+      Top = 388
+      Width = 100
+      ItemHeight = 20
+      ItemIndex = 0
+      Items.Strings = (
+        'Черный'
+        'Белый'
+        'Красный'
+        'Зеленый'
+        'Синий'
+        'Желтый'
+      )
+      OnSelect = ColorBoxSelect
+      Style = csDropDownList
+      TabOrder = 1
+      Text = 'Черный'
+    end
+    object SizeBox: TComboBox
+      Left = 8
+      Height = 28
+      Top = 316
       Width = 100
       ItemHeight = 20
       ItemIndex = 1
@@ -58,60 +88,43 @@ object Form1: TForm1
       )
       OnSelect = SizeBoxSelect
       Style = csDropDownList
-      TabOrder = 0
+      TabOrder = 2
       Text = '2'
     end
-    object LabelSize: TLabel
-      Left = 40
+    object SizeLabel: TLabel
+      Left = 8
       Height = 20
-      Top = 0
-      Width = 100
+      Top = 296
+      Width = 108
       AutoSize = False
       Caption = 'Толщина пера'
       ParentColor = False
     end
-    object LabelColor: TLabel
-      Left = 184
-      Height = 20
-      Top = 0
-      Width = 100
-      AutoSize = False
-      Caption = 'Цвет'
-      ParentColor = False
-    end
-    object ColorBox: TComboBox
-      Left = 184
-      Height = 28
-      Top = 28
-      Width = 100
-      ItemHeight = 20
-      ItemIndex = 0
-      Items.Strings = (
-        'Черный'
-        'Белый'
-        'Красный'
-        'Зеленый'
-        'Синий'
-        'Желтый'
-      )
-      OnSelect = ColorBoxSelect
-      Style = csDropDownList
-      TabOrder = 1
-      Text = 'Черный'
-    end
-    object BtnClear: TButton
-      Left = 344
-      Height = 28
-      Top = 28
-      Width = 115
-      Caption = 'Очистить экран'
-      OnClick = BtnClearClick
-      TabOrder = 2
-    end
+  end
+  object ScrollBarX: TScrollBar
+    Left = 0
+    Height = 21
+    Top = 474
+    Width = 1008
+    Align = alBottom
+    Max = 1000
+    PageSize = 0
+    TabOrder = 1
+    OnScroll = ScrollBarXScroll
+  end
+  object ScrollBarY: TScrollBar
+    Left = 987
+    Height = 474
+    Top = 0
+    Width = 21
+    Align = alRight
+    Kind = sbVertical
+    Max = 1000
+    PageSize = 0
+    TabOrder = 2
+    OnScroll = ScrollBarYScroll
   end
   object MainMenu1: TMainMenu
-    left = 840
-    top = 84
     object MenuFail: TMenuItem
       Caption = 'Файл'
       object MenuExit: TMenuItem

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Menus, Buttons, StdCtrls, About, UTools, UFigures, LCLType;
+  Menus, Buttons, StdCtrls, About, UTools, UFigures, LCLType, UTransformation;
 
 type
 
@@ -14,22 +14,27 @@ type
 
   TForm1 = class(TForm)
     BtnClear: TButton;
-    LabelSize: TLabel;
-    LabelColor: TLabel;
-    SizeBox: TComboBox;
+    ColorBox: TComboBox;
+    ColorLabel: TLabel;
+    ScrollBarY: TScrollBar;
+    ScrollBarX: TScrollBar;
+    SizeLabel: TLabel;
     MainMenu1: TMainMenu;
     MenuFail: TMenuItem;
     MenuAbout: TMenuItem;
     MenuExit: TMenuItem;
     PaintBox: TPaintBox;
     Panel: TPanel;
-    Settings: TPanel;
-    ColorBox: TComboBox;
+    SizeBox: TComboBox;
     procedure BClick(Sender: TObject);
     procedure BtnClearClick(Sender: TObject);
     procedure ColorBoxSelect(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure ScrollBarXScroll(Sender: TObject; ScrollCode: TScrollCode;
+      var ScrollPos: Integer);
+    procedure ScrollBarYScroll(Sender: TObject; ScrollCode: TScrollCode;
+      var ScrollPos: Integer);
     procedure SizeBoxSelect(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure MenuAboutClick(Sender: TObject);
@@ -113,6 +118,20 @@ begin
     FlagShift:=false;
 end;
 
+procedure TForm1.ScrollBarXScroll(Sender: TObject; ScrollCode: TScrollCode;
+  var ScrollPos: Integer);
+begin
+  dx:=ScrollBarX.Position;
+  PaintBox.Invalidate;
+end;
+
+procedure TForm1.ScrollBarYScroll(Sender: TObject; ScrollCode: TScrollCode;
+  var ScrollPos: Integer);
+begin
+  dy:=ScrollBarY.Position;
+  PaintBox.Invalidate;
+end;
+
 procedure TForm1.SizeBoxSelect(Sender: TObject);
 begin
   GSizePen:=Strtoint(SizeBox.Text);
@@ -124,6 +143,10 @@ var
 begin
   SizeBox.OnSelect(SizeBox);
   ColorBox.OnSelect(ColorBox);
+
+  dx:=0;
+  dy:=0;
+  zoom:=2;
 
   setlength(Buttons,length(tools));
   for i:=0 to high(tools) do begin
@@ -137,12 +160,20 @@ end;
 procedure TForm1.MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
+  if (ScreenToWorld(Point(X,Y)).x)>0.9*(ScrollBarX.Max) then
+       ScrollBarX.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).x);
+  if (ScreenToWorld(Point(X,Y)).y)>0.9*(ScrollBarY.Max) then
+       ScrollBarY.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).y);
   Tools[ActiveBtn.Tag].MouseDown(Sender,Button,Shift,X,Y);
 end;
 
 procedure TForm1.MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
+  if (ScreenToWorld(Point(X,Y)).x)>0.9*(ScrollBarX.Max) then
+    ScrollBarX.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).x);
+  if (ScreenToWorld(Point(X,Y)).y)>0.9*(ScrollBarY.Max) then
+    ScrollBarY.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).y);
   Tools[ActiveBtn.Tag].MouseUp(Sender,Button,Shift,X,Y);
 end;
 
@@ -150,6 +181,10 @@ procedure TForm1.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
   if FlagMouse then begin
+    if (ScreenToWorld(Point(X,Y)).x)>0.9*(ScrollBarX.Max) then
+      ScrollBarX.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).x);
+    if (ScreenToWorld(Point(X,Y)).y)>0.9*(ScrollBarY.Max) then
+      ScrollBarY.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).y);
     Tools[ActiveBtn.Tag].MouseMove(Sender,Shift,X,Y);
     PaintBox.Invalidate;
   end;
