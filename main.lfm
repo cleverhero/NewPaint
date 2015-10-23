@@ -1,0 +1,125 @@
+object Form1: TForm1
+  Left = 599
+  Height = 520
+  Top = 187
+  Width = 920
+  Caption = 'Paint'
+  ClientHeight = 495
+  ClientWidth = 920
+  KeyPreview = True
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
+  OnKeyUp = FormKeyUp
+  LCLVersion = '1.4.2.0'
+  object PaintBox: TPaintBox
+    Left = 134
+    Height = 428
+    Top = 0
+    Width = 786
+    Align = alClient
+    OnPaint = PaintBoxPaint
+  end
+  object Panel: TPanel
+    Left = 0
+    Height = 428
+    Top = 0
+    Width = 134
+    Align = alLeft
+    TabOrder = 0
+  end
+  object Settings: TPanel
+    Left = 0
+    Height = 67
+    Top = 428
+    Width = 920
+    Align = alBottom
+    ClientHeight = 67
+    ClientWidth = 920
+    TabOrder = 1
+    object SizeBox: TComboBox
+      Left = 40
+      Height = 28
+      Top = 28
+      Width = 100
+      ItemHeight = 20
+      ItemIndex = 1
+      Items.Strings = (
+        '1'
+        '2'
+        '3'
+        '4'
+        '5'
+        '6'
+        '7'
+        '8'
+        '9'
+        '10'
+      )
+      OnSelect = SizeBoxSelect
+      TabOrder = 0
+      Text = '2'
+    end
+    object LabelSize: TLabel
+      Left = 40
+      Height = 20
+      Top = 0
+      Width = 100
+      AutoSize = False
+      Caption = 'Толщина пера'
+      ParentColor = False
+    end
+    object LabelColor: TLabel
+      Left = 184
+      Height = 20
+      Top = 0
+      Width = 100
+      AutoSize = False
+      Caption = 'Цвет'
+      ParentColor = False
+    end
+    object ColorBox: TComboBox
+      Left = 184
+      Height = 28
+      Top = 28
+      Width = 100
+      ItemHeight = 20
+      ItemIndex = 0
+      Items.Strings = (
+        'Черный'
+        'Белый'
+        'Красный'
+        'Зеленый'
+        'Синий'
+        'Желтый'
+      )
+      OnSelect = ColorBoxSelect
+      TabOrder = 1
+      Text = 'Черный'
+    end
+    object BtnClear: TButton
+      Left = 344
+      Height = 28
+      Top = 28
+      Width = 115
+      Caption = 'Очистить экран'
+      OnClick = BtnClearClick
+      TabOrder = 2
+    end
+  end
+  object MainMenu1: TMainMenu
+    left = 840
+    top = 84
+    object MenuFail: TMenuItem
+      Caption = 'Файл'
+      object MenuExit: TMenuItem
+        Caption = 'Выход'
+        OnClick = MenuExitClick
+      end
+    end
+    object MenuAbout: TMenuItem
+      Caption = 'О программе'
+      OnClick = MenuAboutClick
+    end
+  end
+end
