@@ -5,7 +5,8 @@ interface
 
 
 uses
-  Classes, Forms, Controls, SysUtils, Dialogs, UFigures, ExtCtrls, StdCtrls, Graphics, Buttons, Math;
+  Classes, Forms, Controls, SysUtils, Dialogs, UFigures, ExtCtrls, StdCtrls,
+  Graphics, Buttons, Math, UTransformation;
 
 type
   TTool = Class
@@ -109,7 +110,7 @@ end;
 procedure TTool.CreatePoint(x,y:integer);
 begin
   with Figures[High(Figures)] do
-    Points[high(Points)]:=Point(x,y);
+    Points[high(Points)]:=ScreenToWorld(Point(x,y));
 end;
 
 {TToolPen}
@@ -240,7 +241,8 @@ begin
     SetLength(Points,2);
     CreatePoint(x,y);
     if FlagShift then
-      Points[1].y:=Points[0].y+sign((Points[0].y-Y)*(Points[0].x-X))*(X-Points[0].x);
+      Points[1].y:=Points[0].y+sign((Points[0].y-Points[1].y)*
+      (Points[0].x-Points[1].x))*(Points[1].x-Points[0].x);
   end;
 end;
 
@@ -273,7 +275,8 @@ begin
     SetLength(Points,2);
     CreatePoint(x,y);
     if FlagShift then
-      Points[1].y:=Points[0].y+sign((Points[0].y-Y)*(Points[0].x-X))*(X-Points[0].x);
+      Points[1].y:=Points[0].y+sign((Points[0].y-Points[1].y)*
+      (Points[0].x-Points[1].x))*(Points[1].x-Points[0].x);
   end;
 end;
 
@@ -306,7 +309,8 @@ begin
     SetLength(Points,2);
     CreatePoint(x,y);
     if FlagShift then
-      Points[1].y:=Points[0].y+sign((Points[0].y-Y)*(Points[0].x-X))*(X-Points[0].x);
+      Points[1].y:=Points[0].y+sign((Points[0].y-Points[1].y)*
+      (Points[0].x-Points[1].x))*(Points[1].x-Points[0].x);
   end;
 end;
 
