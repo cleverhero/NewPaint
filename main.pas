@@ -35,8 +35,15 @@ type
     procedure MenuAboutClick(Sender: TObject);
     procedure MenuExitClick(Sender: TObject);
     procedure PaintBoxPaint(Sender: TObject);
+    procedure MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure MouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure MouseMove(Sender: TObject;Shift: TShiftState;
+      X, Y: Integer);
   private
     Buttons:array of TBitBtn;
+    ActiveBtn:TBitBtn;
   public
     { public declarations }
   end;
@@ -64,9 +71,10 @@ var
   Btn:TBitBtn;
 begin
   Btn:=(Sender as TBitBtn);
-  PaintBox.OnMouseDown:=@Tools[Btn.Tag].MouseDown;
-  PaintBox.OnMouseUp:=@Tools[Btn.Tag].MouseUp;
-  PaintBox.OnMouseMove:=@Tools[Btn.Tag].MouseMove;
+  ActiveBtn:=Btn;
+  PaintBox.OnMouseDown:=@MouseDown;
+  PaintBox.OnMouseUp:=@MouseUp;
+  PaintBox.OnMouseMove:=@MouseMove;
 end;
 
 procedure TForm1.BtnClearClick(Sender: TObject);
@@ -124,6 +132,27 @@ begin
     Buttons[i].OnClick:=@BClick;
   end;
   Buttons[0].Click;
+end;
+
+procedure TForm1.MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  Tools[ActiveBtn.Tag].MouseDown(Sender,Button,Shift,X,Y);
+end;
+
+procedure TForm1.MouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  Tools[ActiveBtn.Tag].MouseUp(Sender,Button,Shift,X,Y);
+end;
+
+procedure TForm1.MouseMove(Sender: TObject;Shift: TShiftState;
+  X, Y: Integer);
+begin
+  if FlagMouse then begin
+    Tools[ActiveBtn.Tag].MouseMove(Sender,Shift,X,Y);
+    PaintBox.Invalidate;
+  end;
 end;
 
 procedure TForm1.PaintBoxPaint(Sender: TObject);

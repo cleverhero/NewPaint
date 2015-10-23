@@ -121,9 +121,8 @@ end;
 
 procedure TTool.CreatePoint(x,y:integer);
 begin
-  with Figures[High(Figures)] do begin
+  with Figures[High(Figures)] do
     Points[high(Points)]:=Point(x,y);
-  end;
 end;
 
 {TToolPen}
@@ -148,11 +147,9 @@ end;
 procedure TToolPen.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
-  if FlagMouse then
   with Figures[High(Figures)] do begin
     SetLength(Points,Length(Points)+1);
     CreatePoint(x,y);
-    (Sender as TPaintBox).Invalidate;
   end;
 end;
 
@@ -181,11 +178,9 @@ end;
 procedure TToolLine.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
-  if FlagMouse then
   with Figures[High(Figures)] do begin
     SetLength(Points,2);
     CreatePoint(x,y);
-    (Sender as TPaintBox).Invalidate;
   end;
 end;
 
@@ -225,11 +220,8 @@ procedure TToolPolyLine.MouseMove(Sender: TObject;Shift: TShiftState;
 var
   i:integer;
 begin
-  if FlagMouse then
-  with Figures[High(Figures)] do begin
+  with Figures[High(Figures)] do
     CreatePoint(x,y);
-    (Sender as TPaintBox).Invalidate;
-  end;
 end;
 
 
@@ -257,13 +249,11 @@ end;
 procedure TToolRoundRect.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
-  if FlagMouse then
   with Figures[High(Figures)] do begin
     SetLength(Points,2);
     CreatePoint(x,y);
     if FlagShift then
       Points[1].y:=Points[0].y+sign((Points[0].y-Y)*(Points[0].x-X))*(X-Points[0].x);
-    (Sender as TPaintBox).Invalidate;
   end;
 end;
 
@@ -292,13 +282,11 @@ end;
 procedure TToolRect.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
-  if FlagMouse then
   with Figures[High(Figures)] do begin
     SetLength(Points,2);
     CreatePoint(x,y);
     if FlagShift then
       Points[1].y:=Points[0].y+sign((Points[0].y-Y)*(Points[0].x-X))*(X-Points[0].x);
-    (Sender as TPaintBox).Invalidate;
   end;
 end;
 
@@ -327,13 +315,11 @@ end;
 procedure TToolEllipse.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
-  if FlagMouse then
   with Figures[High(Figures)] do begin
     SetLength(Points,2);
     CreatePoint(x,y);
     if FlagShift then
       Points[1].y:=Points[0].y+sign((Points[0].y-Y)*(Points[0].x-X))*(X-Points[0].x);
-    (Sender as TPaintBox).Invalidate;
   end;
 end;
 
