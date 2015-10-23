@@ -81,7 +81,7 @@ end;
 
 procedure TForm1.ColorBoxSelect(Sender: TObject);
 begin
-  ColorPen:=Colors[ColorBox.ItemIndex+1];
+  GColorPen:=Colors[ColorBox.ItemIndex+1];
 end;
 
 procedure TForm1.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
@@ -107,7 +107,7 @@ end;
 
 procedure TForm1.SizeBoxSelect(Sender: TObject);
 begin
-  SizePen:=Strtoint(SizeBox.Text);
+  GSizePen:=Strtoint(SizeBox.Text);
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);

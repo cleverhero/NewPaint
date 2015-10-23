@@ -16,6 +16,7 @@ type
   Shift: TShiftState; X, Y: Integer); virtual;
     procedure MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer); virtual;
+    procedure CreatePoint(x,y:integer);
   end;
 
   TToolClass = class of TTool;
@@ -84,8 +85,8 @@ type
 var
   Tools:array of TTool;
   FlagMouse:boolean;
-  SizePen:integer;
-  ColorPen:TColor;
+  GSizePen:integer;
+  GColorPen:TColor;
   FlagShift:Boolean;
 
 implementation
@@ -105,43 +106,52 @@ begin
   result.Tag:=i;
   result.Glyph.LoadFromFile(inttostr(i)+'.bmp');
 end;
-Procedure TTool.MouseDown(Sender: TObject; Button: TMouseButton;
+procedure TTool.MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
 end;
-Procedure TTool.MouseUp(Sender: TObject; Button: TMouseButton;
+procedure TTool.MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
 end;
-Procedure TTool.MouseMove(Sender: TObject;Shift: TShiftState;
+procedure TTool.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
+end;
+
+procedure TTool.CreatePoint(x,y:integer);
+begin
+  with Figures[High(Figures)] do begin
+    Points[high(Points)]:=Point(x,y);
+  end;
 end;
 
 {TToolPen}
 
 
-Procedure TToolPen.MouseDown(Sender: TObject; Button: TMouseButton;
+procedure TToolPen.MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   FlagMouse:=true;
   SetLength(Figures,Length(Figures)+1);
   Figures[High(Figures)]:=UFigures.TPen.Create;
-  Figures[High(Figures)].SizePen:=SizePen;
-  Figures[High(Figures)].Color:=ColorPen;
+  with Figures[High(Figures)] do begin
+    SizePen:=GSizePen;
+    Color:=GColorPen;
+  end;
 end;
-Procedure TToolPen.MouseUp(Sender: TObject; Button: TMouseButton;
+procedure TToolPen.MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   FlagMouse:=false;
 end;
-Procedure TToolPen.MouseMove(Sender: TObject;Shift: TShiftState;
+procedure TToolPen.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
-  if FlagMouse then begin
-    SetLength(Figures[High(Figures)].Points,Length(Figures[High(Figures)].Points)+1);
-    Figures[High(Figures)].Points[High(Figures[High(Figures)].Points)].x:=X;
-    Figures[High(Figures)].Points[High(Figures[High(Figures)].Points)].y:=Y;
+  if FlagMouse then
+  with Figures[High(Figures)] do begin
+    SetLength(Points,Length(Points)+1);
+    CreatePoint(x,y);
     (Sender as TPaintBox).Invalidate;
   end;
 end;
@@ -149,28 +159,32 @@ end;
 
 {TToolLine}
 
-Procedure TToolLine.MouseDown(Sender: TObject; Button: TMouseButton;
+procedure TToolLine.MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   FlagMouse:=true;
   SetLength(Figures,Length(Figures)+1);
   Figures[High(Figures)]:=TLine.Create;
-  Figures[High(Figures)].Point1.x:=X;
-  Figures[High(Figures)].Point1.y:=Y;
-  Figures[High(Figures)].SizePen:=SizePen;
-  Figures[High(Figures)].Color:=ColorPen;
+  with Figures[High(Figures)] do begin
+    SetLength(Points,1);
+    CreatePoint(x,y);
+    SizePen:=GSizePen;
+    Color:=GColorPen;
+  end;
 end;
-Procedure TToolLine.MouseUp(Sender: TObject; Button: TMouseButton;
+procedure TToolLine.MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   FlagMouse:=false;
+  if Length(Figures[High(Figures)].Points)<2 then SetLength(Figures,Length(Figures)-1);
 end;
-Procedure TToolLine.MouseMove(Sender: TObject;Shift: TShiftState;
+procedure TToolLine.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
-  if FlagMouse then begin
-    Figures[High(Figures)].Point2.x:=X;
-    Figures[High(Figures)].Point2.y:=Y;
+  if FlagMouse then
+  with Figures[High(Figures)] do begin
+    SetLength(Points,2);
+    CreatePoint(x,y);
     (Sender as TPaintBox).Invalidate;
   end;
 end;
@@ -178,7 +192,7 @@ end;
 
 {TToolPolyLine}
 
-Procedure TToolPolyLine.MouseDown(Sender: TObject; Button: TMouseButton;
+procedure TToolPolyLine.MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var i:integer;
 begin
@@ -186,17 +200,19 @@ begin
     FlagMouse:=true;
     SetLength(Figures,Length(Figures)+1);
     Figures[High(Figures)]:=TPolyLine.Create;
-    Figures[High(Figures)].SizePen:=SizePen;
-    Figures[High(Figures)].Color:=ColorPen;
-    SetLength(Figures[High(Figures)].Points,Length(Figures[High(Figures)].Points)+1);
+    with Figures[High(Figures)] do begin
+      SizePen:=GSizePen;
+      Color:=GColorPen;
+      SetLength(Points,Length(Points)+1);
+    end;
   end;
-  Figures[High(Figures)].Points[High(Figures[High(Figures)].Points)].x:=X;
-  Figures[High(Figures)].Points[High(Figures[High(Figures)].Points)].y:=Y;
-  SetLength(Figures[High(Figures)].Points,Length(Figures[High(Figures)].Points)+1);
-  Figures[High(Figures)].Points[High(Figures[High(Figures)].Points)].x:=X;
-  Figures[High(Figures)].Points[High(Figures[High(Figures)].Points)].y:=Y;
+  with Figures[High(Figures)] do begin
+    CreatePoint(x,y);
+    SetLength(Points,Length(Points)+1);
+    CreatePoint(x,y);
+  end;
 end;
-Procedure TToolPolyLine.MouseUp(Sender: TObject; Button: TMouseButton;
+procedure TToolPolyLine.MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   if button=TMouseButton.mbRight then begin
@@ -204,14 +220,14 @@ begin
     exit;
   end;
 end;
-Procedure TToolPolyLine.MouseMove(Sender: TObject;Shift: TShiftState;
+procedure TToolPolyLine.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 var
   i:integer;
 begin
-  if FlagMouse then begin
-    Figures[High(Figures)].Points[High(Figures[High(Figures)].Points)].x:=X;
-    Figures[High(Figures)].Points[High(Figures[High(Figures)].Points)].y:=Y;
+  if FlagMouse then
+  with Figures[High(Figures)] do begin
+    CreatePoint(x,y);
     (Sender as TPaintBox).Invalidate;
   end;
 end;
@@ -219,31 +235,34 @@ end;
 
 {TToolRoundRect}
 
-Procedure TToolRoundRect.MouseDown(Sender: TObject; Button: TMouseButton;
+procedure TToolRoundRect.MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   FlagMouse:=true;
   SetLength(Figures,Length(Figures)+1);
   Figures[High(Figures)]:=TRoundRect.Create;
-  Figures[High(Figures)].SizePen:=SizePen;
-  Figures[High(Figures)].Color:=ColorPen;
-  Figures[High(Figures)].Point1.x:=X;
-  Figures[High(Figures)].Point1.y:=Y;
+  with Figures[High(Figures)] do begin
+    SetLength(Points,1);
+    CreatePoint(x,y);
+    SizePen:=GSizePen;
+    Color:=GColorPen;
+  end;
 end;
-Procedure TToolRoundRect.MouseUp(Sender: TObject; Button: TMouseButton;
+procedure TToolRoundRect.MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   FlagMouse:=false;
+  if Length(Figures[High(Figures)].Points)<2 then SetLength(Figures,Length(Figures)-1);
 end;
-Procedure TToolRoundRect.MouseMove(Sender: TObject;Shift: TShiftState;
+procedure TToolRoundRect.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
-  if FlagMouse then begin
-    Figures[High(Figures)].Point2.x:=X;
-    Figures[High(Figures)].Point2.y:=Y;
-    with Figures[High(Figures)] do
+  if FlagMouse then
+  with Figures[High(Figures)] do begin
+    SetLength(Points,2);
+    CreatePoint(x,y);
     if FlagShift then
-      Point2.y:=Point1.y+sign((Point1.y-Y)*(Point1.x-X))*(X-Point1.x);
+      Points[1].y:=Points[0].y+sign((Points[0].y-Y)*(Points[0].x-X))*(X-Points[0].x);
     (Sender as TPaintBox).Invalidate;
   end;
 end;
@@ -251,31 +270,34 @@ end;
 
 {TToolRect}
 
-Procedure TToolRect.MouseDown(Sender: TObject; Button: TMouseButton;
+procedure TToolRect.MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   FlagMouse:=true;
   SetLength(Figures,Length(Figures)+1);
   Figures[High(Figures)]:=TRect.Create;
-  Figures[High(Figures)].SizePen:=SizePen;
-  Figures[High(Figures)].Color:=ColorPen;
-  Figures[High(Figures)].Point1.x:=X;
-  Figures[High(Figures)].Point1.y:=Y;
+  with Figures[High(Figures)] do begin
+    SetLength(Points,1);
+    CreatePoint(x,y);
+    SizePen:=GSizePen;
+    Color:=GColorPen;
+  end;
 end;
-Procedure TToolRect.MouseUp(Sender: TObject; Button: TMouseButton;
+procedure TToolRect.MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   FlagMouse:=false;
+  if Length(Figures[High(Figures)].Points)<2 then SetLength(Figures,Length(Figures)-1);
 end;
-Procedure TToolRect.MouseMove(Sender: TObject;Shift: TShiftState;
+procedure TToolRect.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
-  if FlagMouse then begin
-    Figures[High(Figures)].Point2.x:=X;
-    Figures[High(Figures)].Point2.y:=Y;
-    with Figures[High(Figures)] do
+  if FlagMouse then
+  with Figures[High(Figures)] do begin
+    SetLength(Points,2);
+    CreatePoint(x,y);
     if FlagShift then
-      Point2.y:=Point1.y+sign((Point1.y-Y)*(Point1.x-X))*(X-Point1.x);
+      Points[1].y:=Points[0].y+sign((Points[0].y-Y)*(Points[0].x-X))*(X-Points[0].x);
     (Sender as TPaintBox).Invalidate;
   end;
 end;
@@ -283,31 +305,34 @@ end;
 
 {TToolEllipse}
 
-Procedure TToolEllipse.MouseDown(Sender: TObject; Button: TMouseButton;
+procedure TToolEllipse.MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   FlagMouse:=true;
   SetLength(Figures,Length(Figures)+1);
   Figures[High(Figures)]:=TEllipse.Create;
-  Figures[High(Figures)].SizePen:=SizePen;
-  Figures[High(Figures)].Color:=ColorPen;
-  Figures[High(Figures)].Point1.x:=X;
-  Figures[High(Figures)].Point1.y:=Y;
+  with Figures[High(Figures)] do begin
+    SetLength(Points,1);
+    CreatePoint(x,y);
+    SizePen:=GSizePen;
+    Color:=GColorPen;
+  end;
 end;
-Procedure TToolEllipse.MouseUp(Sender: TObject; Button: TMouseButton;
+procedure TToolEllipse.MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   FlagMouse:=false;
+  if Length(Figures[High(Figures)].Points)<2 then SetLength(Figures,Length(Figures)-1);
 end;
-Procedure TToolEllipse.MouseMove(Sender: TObject;Shift: TShiftState;
+procedure TToolEllipse.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
-  if FlagMouse then begin
-    Figures[High(Figures)].Point2.x:=X;
-    Figures[High(Figures)].Point2.y:=Y;
-    with Figures[High(Figures)] do
+  if FlagMouse then
+  with Figures[High(Figures)] do begin
+    SetLength(Points,2);
+    CreatePoint(x,y);
     if FlagShift then
-      Point2.y:=Point1.y+sign((Point1.y-Y)*(Point1.x-X))*(X-Point1.x);
+      Points[1].y:=Points[0].y+sign((Points[0].y-Y)*(Points[0].x-X))*(X-Points[0].x);
     (Sender as TPaintBox).Invalidate;
   end;
 end;

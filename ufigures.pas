@@ -12,7 +12,6 @@ type
     SizePen:Integer;
     Color:TColor;
     Points:array of TPoint;
-    Point1,Point2:TPoint;
     procedure Draw(Canvas:TCanvas); virtual;
   end;
 
@@ -20,27 +19,21 @@ type
    procedure Draw(Canvas:TCanvas); override;
   end;
 
-
   TLine = Class(TFigure)
     procedure Draw(Canvas:TCanvas); override;
   end;
-
 
   TPolyLine = Class(TFigure)
     procedure Draw(Canvas:TCanvas); override;
   end;
 
-
   TRect = Class(TFigure)
     procedure Draw(Canvas:TCanvas); override;
   end;
 
-
   TEllipse = Class(TFigure)
     procedure Draw(Canvas:TCanvas); override;
   end;
-
-
 
   TRoundRect = Class(TFigure)
     procedure Draw(Canvas:TCanvas); override;
@@ -50,10 +43,10 @@ var
   Figures:array of TFigure;
 
 implementation
+
 procedure TFigure.Draw(Canvas:TCanvas);
 begin
 end;
-
 
 procedure TPen.Draw(Canvas:TCanvas);
 var
@@ -72,7 +65,7 @@ var
 begin
   Canvas.Pen.Color:=Color;
   Canvas.Pen.Width:=SizePen;
-  Canvas.Line(Point1,Point2);
+  Canvas.Line(Points[0],Points[1]);
 end;
 
 
@@ -93,7 +86,7 @@ var
 begin
   Canvas.Pen.Color:=Color;
   Canvas.Pen.Width:=SizePen;
-  Canvas.RoundRect(min(Point1.x,Point2.x),min(Point1.y,Point2.y),max(Point1.x,Point2.x),max(Point1.y,Point2.y),15,15);
+  Canvas.RoundRect(min(Points[0].x,Points[1].x),min(Points[0].y,Points[1].y),max(Points[0].x,Points[1].x),max(Points[0].y,Points[1].y),15,15);
 end;
 
 procedure TRect.Draw(Canvas:TCanvas);
@@ -102,7 +95,7 @@ var
 begin
   Canvas.Pen.Color:=Color;
   Canvas.Pen.Width:=SizePen;
-  Canvas.Rectangle(min(Point1.x,Point2.x),min(Point1.y,Point2.y),max(Point1.x,Point2.x),max(Point1.y,Point2.y));
+  Canvas.Rectangle(min(Points[0].x,Points[1].x),min(Points[0].y,Points[1].y),max(Points[0].x,Points[1].x),max(Points[0].y,Points[1].y));
 end;
 
 procedure TEllipse.Draw(Canvas:TCanvas);
@@ -111,7 +104,7 @@ var
 begin
   Canvas.Pen.Color:=Color;
   Canvas.Pen.Width:=SizePen;
-  Canvas.Ellipse(min(Point1.x,Point2.x),min(Point1.y,Point2.y),max(Point1.x,Point2.x),max(Point1.y,Point2.y));
+  Canvas.Ellipse(min(Points[0].x,Points[1].x),min(Points[0].y,Points[1].y),max(Points[0].x,Points[1].x),max(Points[0].y,Points[1].y));
 end;
 
 end.
