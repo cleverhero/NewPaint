@@ -12,7 +12,7 @@ type
     SizePen:Integer;
     Color:TColor;
     Points:array of TPoint;
-    procedure Draw(Canvas:TCanvas); virtual;
+    procedure Draw(Canvas:TCanvas); virtual;abstract;
   end;
 
   TPen = Class(TFigure)
@@ -43,11 +43,6 @@ var
   Figures:array of TFigure;
 
 implementation
-
-procedure TFigure.Draw(Canvas:TCanvas);
-begin
-end;
-
 procedure TPen.Draw(Canvas:TCanvas);
 var
   i:integer;

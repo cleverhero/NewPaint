@@ -11,11 +11,11 @@ type
   TTool = Class
     function BtnRegistration(i:integer;Sender:TObject):TBitBtn;
     procedure MouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer); virtual;
+  Shift: TShiftState; X, Y: Integer); virtual;abstract;
     procedure MouseUp(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer); virtual;
+  Shift: TShiftState; X, Y: Integer); virtual;abstract;
     procedure MouseMove(Sender: TObject;Shift: TShiftState;
-  X, Y: Integer); virtual;
+  X, Y: Integer); virtual;abstract;
     procedure CreatePoint(x,y:integer);
   end;
 
@@ -106,19 +106,6 @@ begin
   result.Tag:=i;
   result.Glyph.LoadFromFile(inttostr(i)+'.bmp');
 end;
-procedure TTool.MouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-end;
-procedure TTool.MouseUp(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-end;
-procedure TTool.MouseMove(Sender: TObject;Shift: TShiftState;
-  X, Y: Integer);
-begin
-end;
-
 procedure TTool.CreatePoint(x,y:integer);
 begin
   with Figures[High(Figures)] do
