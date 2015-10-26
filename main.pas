@@ -17,7 +17,8 @@ type
     BtnClear: TButton;
     ColorBox: TComboBox;
     ColorLabel: TLabel;
-    ZoomBox: TComboBox;
+    Label1: TLabel;
+    ZoomEdit: TEdit;
     ZoomLabel: TLabel;
     ScrollBarY: TScrollBar;
     ScrollBarX: TScrollBar;
@@ -34,6 +35,7 @@ type
     procedure ColorBoxSelect(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormResize(Sender: TObject);
     procedure ScrollBarXScroll(Sender: TObject; ScrollCode: TScrollCode;
       var ScrollPos: Integer);
     procedure ScrollBarYScroll(Sender: TObject; ScrollCode: TScrollCode;
@@ -49,10 +51,12 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure MouseMove(Sender: TObject;Shift: TShiftState;
       X, Y: Integer);
-    procedure ZoomBoxSelect(Sender: TObject);
+    procedure ZoomEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
+      );
   private
     Buttons:array of TBitBtn;
     ActiveBtn:TBitBtn;
+    NormalText:boolean;
   public
     { public declarations }
   end;
@@ -122,17 +126,23 @@ begin
     FlagShift:=false;
 end;
 
+procedure TForm1.FormResize(Sender: TObject);
+begin
+  WidthCanvas:=PaintBox.Width;
+  HeightCanvas:=PaintBox.Height;
+end;
+
 procedure TForm1.ScrollBarXScroll(Sender: TObject; ScrollCode: TScrollCode;
   var ScrollPos: Integer);
 begin
-  dx:=ScrollBarX.Position;
+  ShiftX:=ScrollBarX.Position;
   PaintBox.Invalidate;
 end;
 
 procedure TForm1.ScrollBarYScroll(Sender: TObject; ScrollCode: TScrollCode;
   var ScrollPos: Integer);
 begin
-  dy:=ScrollBarY.Position;
+  ShiftY:=ScrollBarY.Position;
   PaintBox.Invalidate;
 end;
 
@@ -148,9 +158,10 @@ begin
   SizeBox.OnSelect(SizeBox);
   ColorBox.OnSelect(ColorBox);
 
-  dx:=0;
-  dy:=0;
+  ShiftX:=0;
+  ShiftY:=0;
   zoom:=1;
+  NormalText:=true;
 
   setlength(Buttons,length(tools));
   for i:=0 to high(tools) do begin
@@ -171,6 +182,11 @@ procedure TForm1.MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   Tools[ActiveBtn.Tag].MouseUp(Sender,Button,Shift,X,Y);
+  ZoomEdit.Text:=floattostr(100/Zoom);
+  ScrollBarX.Position:=Round(ShiftX);
+  ScrollBarY.Position:=Round(ShiftY);
+  NormalText:=true;
+  PaintBox.Invalidate;
 end;
 
 procedure TForm1.MouseMove(Sender: TObject;Shift: TShiftState;
@@ -186,16 +202,25 @@ begin
     if (ScreenToWorld(Point(X,Y)).y)<0.9*(ScrollBarY.Min) then
       ScrollBarY.Min:=Round(1.3*ScreenToWorld(Point(X,Y)).y);
     Tools[ActiveBtn.Tag].MouseMove(Sender,Shift,X,Y);
-    ScrollBarX.Position:=Round(dx);
-    ScrollBarY.Position:=Round(dy);
+    ScrollBarX.Position:=Round(ShiftX);
+    ScrollBarY.Position:=Round(ShiftY);
     PaintBox.Invalidate;
   end;
 end;
 
-procedure TForm1.ZoomBoxSelect(Sender: TObject);
+procedure TForm1.ZoomEditKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
 begin
-  zoom:=100/strtoint(Copy(ZoomBox.Text,1,length(ZoomBox.Text)-1));
-  PaintBox.Invalidate;
+    if key=13 then begin
+      if not NormalText then begin
+        ZoomEdit.Text:=floattostr(100/zoom);
+        NormalText:=true;
+      end;
+        zoom:=100/strtofloat(ZoomEdit.Text);
+        PaintBox.Invalidate;
+    end;
+    if not(chr(key) in ['0'..'9',chr(VK_LEFT)..chr(VK_DOWN)]) and (key<>8) and (key<>13) then
+      NormalText:=false;
 end;
 
 procedure TForm1.PaintBoxPaint(Sender: TObject);

@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 327
+  Left = 340
   Height = 520
-  Top = 117
+  Top = 230
   Width = 1008
   Caption = 'Paint'
   ClientHeight = 495
@@ -11,6 +11,7 @@ object Form1: TForm1
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyUp = FormKeyUp
+  OnResize = FormResize
   LCLVersion = '1.4.2.0'
   object PaintBox: TPaintBox
     Left = 134
@@ -108,33 +109,23 @@ object Form1: TForm1
       Caption = 'Zoom'
       ParentColor = False
     end
-    object ZoomBox: TComboBox
+    object ZoomEdit: TEdit
       Left = 8
       Height = 28
-      Top = 340
-      Width = 100
-      ItemHeight = 20
-      ItemIndex = 4
-      Items.Strings = (
-        '10%'
-        '25%'
-        '50%'
-        '75%'
-        '100%'
-        '125%'
-        '150%'
-        '175%'
-        '200%'
-        '225%'
-        '250%'
-        '275%'
-        '300%'
-        '325%'
-        '350%'
-      )
-      OnSelect = ZoomBoxSelect
+      Top = 336
+      Width = 80
+      OnKeyDown = ZoomEditKeyDown
       TabOrder = 3
-      Text = '100%'
+      Text = '100'
+    end
+    object Label1: TLabel
+      Left = 88
+      Height = 24
+      Top = 340
+      Width = 20
+      AutoSize = False
+      Caption = '%'
+      ParentColor = False
     end
   end
   object ScrollBarX: TScrollBar
