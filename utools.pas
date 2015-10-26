@@ -9,6 +9,7 @@ uses
   Graphics, Buttons, Math, UTransformation;
 
 type
+
   TTool = Class
     function BtnRegistration(i:integer;Sender:TObject):TBitBtn;
     procedure MouseDown(Sender: TObject; Button: TMouseButton;
@@ -92,6 +93,15 @@ type
   X, Y: Integer); override;
     private
       a:TPoint;
+  end;
+
+  TToolLoop = Class(TTool)
+    procedure MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Sender: TObject;Shift: TShiftState;
+  X, Y: Integer); override;
   end;
 
 var
@@ -343,10 +353,35 @@ procedure TToolHand.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
   if FlagMouse then begin
-    dx+=a.x-X;
-    dy+=a.y-Y;
+    ShiftX+=a.x-X;
+    ShiftY+=a.y-Y;
     a:=Point(X,Y);
   end;
+end;
+
+
+{TToolLoop}
+
+procedure TToolLoop.MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+end;
+procedure TToolLoop.MouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+  p1:DoublePoint;
+begin
+  p1:=ScreenToWorld(Point(x,y));
+  if Button=TMouseButton.mbRight then
+    Zoom:=min(10,Zoom*2);
+  if Button=TMouseButton.mbLeft then
+    Zoom:=max(0.25,Zoom/2);
+  ShiftX:=p1.x-WidthCanvas/2*zoom;
+  ShiftY:=p1.y-HeightCanvas/2*zoom;
+end;
+procedure TToolLoop.MouseMove(Sender: TObject;Shift: TShiftState;
+  X, Y: Integer);
+begin
 end;
 initialization
   ToolRegistration(TToolPen);
@@ -356,5 +391,6 @@ initialization
   ToolRegistration(TToolRoundRect);
   ToolRegistration(TToolEllipse);
   ToolRegistration(TToolHand);
+  ToolRegistration(TToolLoop);
 end.
 
