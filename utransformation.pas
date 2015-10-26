@@ -16,18 +16,18 @@ function WorldToScreen(a:DoublePoint):TPoint;
 function ScreenToWorld(a:TPoint):DoublePoint;
 
 var
-  ShiftX,ShiftY,zoom:double;
-  WidthCanvas,HeightCanvas:integer;
+  dx,dy,zoom:double;
+
 implementation
 function WorldToScreen(a:DoublePoint):TPoint;
 begin
-  WorldToScreen:=Point(Round((a.x-ShiftX)/zoom),Round((a.y-ShiftY)/zoom));
+  WorldToScreen:=Point(Round((a.x-dx)/zoom),Round((a.y-dy)/zoom));
 end;
 
 function ScreenToWorld(a:TPoint):DoublePoint;
 begin
-  ScreenToWorld.x:=a.x*zoom+ShiftX;
-  ScreenToWorld.y:=a.y*zoom+ShiftY;
+  ScreenToWorld.x:=a.x*zoom+dx;
+  ScreenToWorld.y:=a.y*zoom+dy;
 end;
 
 end.
