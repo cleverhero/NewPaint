@@ -144,7 +144,7 @@ object Form1: TForm1
     Width = 1008
     Align = alBottom
     Max = 1000
-    Min = -200
+    Min = -1000
     PageSize = 0
     TabOrder = 1
     OnScroll = ScrollBarXScroll
@@ -157,7 +157,7 @@ object Form1: TForm1
     Align = alRight
     Kind = sbVertical
     Max = 1000
-    Min = -200
+    Min = -1000
     PageSize = 0
     TabOrder = 2
     OnScroll = ScrollBarYScroll

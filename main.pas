@@ -150,7 +150,7 @@ begin
 
   dx:=0;
   dy:=0;
-  zoom:=2;
+  zoom:=1;
 
   setlength(Buttons,length(tools));
   for i:=0 to high(tools) do begin
@@ -164,20 +164,12 @@ end;
 procedure TForm1.MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  if (ScreenToWorld(Point(X,Y)).x)>0.9*(ScrollBarX.Max) then
-       ScrollBarX.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).x);
-  if (ScreenToWorld(Point(X,Y)).y)>0.9*(ScrollBarY.Max) then
-       ScrollBarY.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).y);
   Tools[ActiveBtn.Tag].MouseDown(Sender,Button,Shift,X,Y);
 end;
 
 procedure TForm1.MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  if (ScreenToWorld(Point(X,Y)).x)>0.9*(ScrollBarX.Max) then
-    ScrollBarX.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).x);
-  if (ScreenToWorld(Point(X,Y)).y)>0.9*(ScrollBarY.Max) then
-    ScrollBarY.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).y);
   Tools[ActiveBtn.Tag].MouseUp(Sender,Button,Shift,X,Y);
 end;
 
@@ -189,7 +181,13 @@ begin
       ScrollBarX.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).x);
     if (ScreenToWorld(Point(X,Y)).y)>0.9*(ScrollBarY.Max) then
       ScrollBarY.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).y);
+    if (ScreenToWorld(Point(X,Y)).x)<0.9*(ScrollBarX.Min) then
+      ScrollBarX.Min:=Round(1.3*ScreenToWorld(Point(X,Y)).x);
+    if (ScreenToWorld(Point(X,Y)).y)<0.9*(ScrollBarY.Min) then
+      ScrollBarY.Min:=Round(1.3*ScreenToWorld(Point(X,Y)).y);
     Tools[ActiveBtn.Tag].MouseMove(Sender,Shift,X,Y);
+    ScrollBarX.Position:=Round(dx);
+    ScrollBarY.Position:=Round(dy);
     PaintBox.Invalidate;
   end;
 end;

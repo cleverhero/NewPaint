@@ -83,6 +83,17 @@ type
   X, Y: Integer); override;
   end;
 
+  TToolHand = Class(TTool)
+    procedure MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Sender: TObject;Shift: TShiftState;
+  X, Y: Integer); override;
+    private
+      a:TPoint;
+  end;
+
 var
   Tools:array of TTool;
   FlagMouse:boolean;
@@ -100,8 +111,8 @@ end;
 function TTool.BtnRegistration(i:integer;Sender:TObject):TBitBtn;
 begin
   result:=TBitBtn.Create(Sender as TComponent);
-  result.Left:=8+69*(i div 3);
-  result.Top:=20+69*(i mod 3);
+  result.Left:=8+69*(i div 4);
+  result.Top:=20+69*(i mod 4);
   result.Width:=49;
   result.Height:=49;
   result.Tag:=i;
@@ -314,6 +325,29 @@ begin
   end;
 end;
 
+
+{TToolHand}
+
+procedure TToolHand.MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  FlagMouse:=true;
+  a:=Point(X,Y);
+end;
+procedure TToolHand.MouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  FlagMouse:=false;
+end;
+procedure TToolHand.MouseMove(Sender: TObject;Shift: TShiftState;
+  X, Y: Integer);
+begin
+  if FlagMouse then begin
+    dx+=a.x-X;
+    dy+=a.y-Y;
+    a:=Point(X,Y);
+  end;
+end;
 initialization
   ToolRegistration(TToolPen);
   ToolRegistration(TToolLine);
@@ -321,5 +355,6 @@ initialization
   ToolRegistration(TToolRect);
   ToolRegistration(TToolRoundRect);
   ToolRegistration(TToolEllipse);
+  ToolRegistration(TToolHand);
 end.
 
