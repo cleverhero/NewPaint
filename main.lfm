@@ -1,10 +1,10 @@
 object Form1: TForm1
-  Left = 340
-  Height = 520
-  Top = 230
+  Left = 220
+  Height = 597
+  Top = 118
   Width = 1008
   Caption = 'Paint'
-  ClientHeight = 495
+  ClientHeight = 572
   ClientWidth = 1008
   KeyPreview = True
   Menu = MainMenu1
@@ -15,7 +15,7 @@ object Form1: TForm1
   LCLVersion = '1.4.2.0'
   object PaintBox: TPaintBox
     Left = 134
-    Height = 474
+    Height = 551
     Top = 0
     Width = 853
     Align = alClient
@@ -23,17 +23,17 @@ object Form1: TForm1
   end
   object Panel: TPanel
     Left = 0
-    Height = 474
+    Height = 551
     Top = 0
     Width = 134
     Align = alLeft
-    ClientHeight = 474
+    ClientHeight = 551
     ClientWidth = 134
     TabOrder = 0
     object BtnClear: TButton
       Left = 8
       Height = 25
-      Top = 284
+      Top = 364
       Width = 116
       Caption = 'Очиcтить экран'
       OnClick = BtnClearClick
@@ -42,7 +42,7 @@ object Form1: TForm1
     object ColorLabel: TLabel
       Left = 8
       Height = 20
-      Top = 424
+      Top = 504
       Width = 52
       AutoSize = False
       Caption = 'Цвет'
@@ -51,7 +51,7 @@ object Form1: TForm1
     object ColorBox: TComboBox
       Left = 8
       Height = 28
-      Top = 444
+      Top = 524
       Width = 100
       ItemHeight = 20
       ItemIndex = 0
@@ -71,7 +71,7 @@ object Form1: TForm1
     object SizeBox: TComboBox
       Left = 8
       Height = 28
-      Top = 392
+      Top = 472
       Width = 100
       ItemHeight = 20
       ItemIndex = 1
@@ -95,7 +95,7 @@ object Form1: TForm1
     object SizeLabel: TLabel
       Left = 8
       Height = 20
-      Top = 372
+      Top = 452
       Width = 108
       AutoSize = False
       Caption = 'Толщина пера'
@@ -104,7 +104,7 @@ object Form1: TForm1
     object ZoomLabel: TLabel
       Left = 8
       Height = 20
-      Top = 320
+      Top = 400
       Width = 40
       Caption = 'Zoom'
       ParentColor = False
@@ -112,7 +112,7 @@ object Form1: TForm1
     object ZoomEdit: TEdit
       Left = 8
       Height = 28
-      Top = 336
+      Top = 416
       Width = 80
       OnKeyDown = ZoomEditKeyDown
       TabOrder = 3
@@ -121,7 +121,7 @@ object Form1: TForm1
     object Label1: TLabel
       Left = 88
       Height = 24
-      Top = 340
+      Top = 420
       Width = 20
       AutoSize = False
       Caption = '%'
@@ -131,7 +131,7 @@ object Form1: TForm1
   object ScrollBarX: TScrollBar
     Left = 0
     Height = 21
-    Top = 474
+    Top = 551
     Width = 1008
     Align = alBottom
     Max = 1000
@@ -142,7 +142,7 @@ object Form1: TForm1
   end
   object ScrollBarY: TScrollBar
     Left = 987
-    Height = 474
+    Height = 551
     Top = 0
     Width = 21
     Align = alRight

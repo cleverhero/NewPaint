@@ -104,6 +104,15 @@ type
   X, Y: Integer); override;
   end;
 
+  TToolLoopRect = Class(TTool)
+    procedure MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseMove(Sender: TObject;Shift: TShiftState;
+  X, Y: Integer); override;
+  end;
+
 var
   Tools:array of TTool;
   FlagMouse:boolean;
@@ -121,8 +130,8 @@ end;
 function TTool.BtnRegistration(i:integer;Sender:TObject):TBitBtn;
 begin
   result:=TBitBtn.Create(Sender as TComponent);
-  result.Left:=8+69*(i div 4);
-  result.Top:=20+69*(i mod 4);
+  result.Left:=8+69*(i div 5);
+  result.Top:=20+69*(i mod 5);
   result.Width:=49;
   result.Height:=49;
   result.Tag:=i;
@@ -383,6 +392,48 @@ procedure TToolLoop.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
 begin
 end;
+
+
+{TToolLoopRect}
+
+procedure TToolLoopRect.MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  FlagMouse:=true;
+  SetLength(Figures,Length(Figures)+1);
+  Figures[High(Figures)]:=TRect.Create;
+  with Figures[High(Figures)] do begin
+    SetLength(Points,1);
+    CreatePoint(x,y);
+  end;
+end;
+procedure TToolLoopRect.MouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+  xmin,ymin:double;
+begin
+  FlagMouse:=false;
+  if Length(Figures[High(Figures)].Points)=2 then
+    with Figures[High(Figures)] do begin
+      zoom:=abs(Points[0].x-Points[1].x)/WidthCanvas;
+      xmin:=min(Points[0].x,Points[1].x);
+      ymin:=min(Points[0].y,Points[1].y);
+      ShiftX:=xmin;
+      ShiftY:=ymin;
+    end;
+  SetLength(Figures,Length(Figures)-1);
+end;
+procedure TToolLoopRect.MouseMove(Sender: TObject;Shift: TShiftState;
+  X, Y: Integer);
+begin
+  with Figures[High(Figures)] do begin
+    SetLength(Points,2);
+    CreatePoint(x,y);
+    Points[1].y:=Points[0].y+sign((Points[0].y-Points[1].y)*
+    (Points[0].x-Points[1].x))*(Points[1].x-Points[0].x)*HeightCanvas/WidthCanvas;
+  end;
+end;
+
 initialization
   ToolRegistration(TToolPen);
   ToolRegistration(TToolLine);
@@ -392,5 +443,6 @@ initialization
   ToolRegistration(TToolEllipse);
   ToolRegistration(TToolHand);
   ToolRegistration(TToolLoop);
+  ToolRegistration(TToolLoopRect);
 end.
 
