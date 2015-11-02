@@ -45,10 +45,6 @@ type
       var ScrollPos: Integer);
     procedure ScrollBarYScroll(Sender: TObject; ScrollCode: TScrollCode;
       var ScrollPos: Integer);
-    procedure ShiftXEditKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure ShiftYEditKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure SizeBoxSelect(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure MenuAboutClick(Sender: TObject);
@@ -60,24 +56,48 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure MouseMove(Sender: TObject;Shift: TShiftState;
       X, Y: Integer);
-    procedure ZoomEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
+    procedure EditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
       );
+    procedure Update;
+    procedure CheckString(AText:string);
   private
     Buttons:array of TBitBtn;
     ActiveBtn,FullScreenBtn:TBitBtn;
-    NormalTextZoom,NormalTextShiftX,NormalTextShiftY:boolean;
   public
     { public declarations }
   end;
 
 var
   Form1:TForm;
+  flags : TBits;
   Colors:array [1..6] of TColor = (ClBlack,ClWhite,clRed,Clgreen,clBlue,clYellow);
 implementation
 
 {$R *.lfm}
 
 { TForm1 }
+procedure TForm1.Update;
+begin
+  ZoomEdit.Text:=floattostr(100/Screen.Zoom);
+  ScrollBarX.Position:=Round(Screen.Shift.X);
+  ScrollBarY.Position:=Round(Screen.Shift.Y);
+  ShiftXEdit.Text:=floattostr(Screen.Shift.X);
+  ShiftYEdit.Text:=floattostr(Screen.Shift.Y);
+end;
+
+procedure TForm1.CheckString(AText:string);
+var
+  i:integer;
+begin
+  flags.Size:=1000000000000;
+  flags[999999999999]:=true;
+  for i:=1 to length(AText) do
+    if not(AText[i] in ['0'..'9',',']) then begin
+      Update;
+      Break;
+    end;
+end;
+
 procedure TForm1.MenuExitClick(Sender: TObject);
 begin
   Form1.Close;
@@ -103,22 +123,16 @@ procedure TForm1.FullScreenBtnClick(Sender: TObject);
 var
   dx,dy:double;
 begin
-  if length(Figures)<>0 then begin
-    dx:=maxScreen.x-minScreen.x;
-    dy:=maxScreen.y-minScreen.y;
-    if dx*AHeight>=dy*AWidth then
-      zoom:=dx/AWidth;
-    if dy*AWidth>dx*AHeight then
-      zoom:=dy/AHeight;
-    ZoomEdit.Text:=floattostr(100/Zoom);
-    NormalTextZoom:=true;
-    ShiftX:=minScreen.x;
-    ShiftY:=minScreen.y;
-    ScrollBarX.Position:=Round(ShiftX);
-    ScrollBarY.Position:=Round(ShiftY);
-    ShiftXEdit.Text:=floattostr(ShiftX);
-    ShiftYEdit.Text:=floattostr(ShiftY);
-    PaintBox.Invalidate;
+  with Screen do
+    if length(Figures)<>0 then begin
+      Translation(Shift,DoublePoint(minScreen.x,minScreen.y));
+      dx:=maxScreen.x-minScreen.x;
+      dy:=maxScreen.y-minScreen.y;
+      if dx*Height>=dy*Width then
+        Screen.Scale(dx/Width/Zoom,0,0);
+      if dy*Width>dx*Height then
+        Screen.Scale(dy/Height/Zoom,0,0);
+      PaintBox.Invalidate;
   end;
 end;
 
@@ -160,56 +174,24 @@ end;
 
 procedure TForm1.FormResize(Sender: TObject);
 begin
-  AWidth:=PaintBox.Width;
-  AHeight:=PaintBox.Height;
+  Screen.Width:=PaintBox.Width;
+  Screen.Height:=PaintBox.Height;
 end;
 
 procedure TForm1.ScrollBarXScroll(Sender: TObject; ScrollCode: TScrollCode;
   var ScrollPos: Integer);
 begin
-  ShiftX:=ScrollBarX.Position;
-  ShiftXEdit.Text:=floattostr(ShiftX);
+  Screen.Shift.X:=ScrollBarX.Position;
+  ShiftXEdit.Text:=floattostr(Screen.Shift.X);
   PaintBox.Invalidate;
 end;
 
 procedure TForm1.ScrollBarYScroll(Sender: TObject; ScrollCode: TScrollCode;
   var ScrollPos: Integer);
 begin
-  ShiftY:=ScrollBarY.Position;
-  ShiftYEdit.Text:=floattostr(ShiftY);
+  Screen.Shift.Y:=ScrollBarY.Position;
+  ShiftYEdit.Text:=floattostr(Screen.Shift.Y);
   PaintBox.Invalidate;
-end;
-
-procedure TForm1.ShiftXEditKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-  if key=13 then begin
-    if not NormalTextShiftX then begin
-      ShiftXEdit.Text:=floattostr(ShiftX);
-      NormalTextShiftX:=true;
-    end;
-    ShiftX:=strtofloat(ShiftXEdit.Text);
-    PaintBox.Invalidate;
-  end;
-  if not(chr(key) in ['0'..'9',chr(VK_LEFT)..chr(VK_DOWN),chr(VK_DELETE),chr(VK_SHIFT)])
-  and (key<>8) and (key<>13) then
-    NormalTextShiftX:=false;
-end;
-
-procedure TForm1.ShiftYEditKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-  if key=13 then begin
-    if not NormalTextShiftY then begin
-      ShiftYEdit.Text:=floattostr(ShiftY);
-      NormalTextShiftY:=true;
-    end;
-    ShiftY:=strtofloat(ShiftYEdit.Text);
-    PaintBox.Invalidate;
-  end;
-  if not(chr(key) in ['0'..'9',chr(VK_LEFT)..chr(VK_DOWN),chr(VK_DELETE),chr(VK_SHIFT)])
-  and (key<>8) and (key<>13) then
-    NormalTextShiftY:=false;
 end;
 
 procedure TForm1.SizeBoxSelect(Sender: TObject);
@@ -224,20 +206,19 @@ begin
   SizeBox.OnSelect(SizeBox);
   ColorBox.OnSelect(ColorBox);
 
-  AWidth:=PaintBox.Width;
-  AHeight:=PaintBox.Height;
+  Screen.Width:=PaintBox.Width;
+  Screen.Height:=PaintBox.Height;
 
-  ShiftX:=0;
-  ShiftY:=0;
-  zoom:=1;
+  Screen.Shift.X:=0;
+  Screen.Shift.Y:=0;
+  Screen.Zoom:=1;
 
-  NormalTextZoom:=true;
-  NormalTextShiftX:=true;
-  NormalTextShiftY:=true;
+  Screen.minScreen.x:=0;
+  Screen.minScreen.y:=0;
+  Screen.maxScreen.x:=Screen.Width;
+  Screen.maxScreen.y:=Screen.Height;
 
-  minScreen.x:=0;
-  minScreen.y:=0;
-  maxScreen:=minScreen;
+  Screen.OnChange:=@Update;
 
   setlength(Buttons,length(tools));
   for i:=0 to high(tools) do begin
@@ -268,54 +249,47 @@ procedure TForm1.MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   Tools[ActiveBtn.Tag].MouseUp(Sender,Button,Shift,X,Y);
-  ZoomEdit.Text:=floattostr(100/Zoom);
-  NormalTextZoom:=true;
-  ScrollBarX.Position:=Round(ShiftX);
-  ScrollBarY.Position:=Round(ShiftY);
-  ShiftXEdit.Text:=floattostr(ShiftX);
-  ShiftYEdit.Text:=floattostr(ShiftY);
   PaintBox.Invalidate;
 end;
 
 procedure TForm1.MouseMove(Sender: TObject;Shift: TShiftState;
   X, Y: Integer);
+var
+  p:TDoublePoint;
 begin
   if FlagMouse then begin
-    if (ScreenToWorld(Point(X,Y)).x)>0.9*(ScrollBarX.Max) then
-      ScrollBarX.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).x);
-    if (ScreenToWorld(Point(X,Y)).y)>0.9*(ScrollBarY.Max) then
-      ScrollBarY.Max:=Round(1.15*ScreenToWorld(Point(X,Y)).y);
-    if (ScreenToWorld(Point(X,Y)).x)<0.9*(ScrollBarX.Min) then
-      ScrollBarX.Min:=Round(1.3*ScreenToWorld(Point(X,Y)).x);
-    if (ScreenToWorld(Point(X,Y)).y)<0.9*(ScrollBarY.Min) then
-      ScrollBarY.Min:=Round(1.3*ScreenToWorld(Point(X,Y)).y);
+    p:=Screen.ScreenToWorld(Point(X,Y));
+    if p.x>0.9*ScrollBarX.Max then
+      ScrollBarX.Max:=Round(1.15*p.x);
+    if p.y>0.9*ScrollBarY.Max then
+      ScrollBarY.Max:=Round(1.15*p.y);
+    if p.x<0.9*ScrollBarX.Min then
+      ScrollBarX.Min:=Round(1.3*p.x);
+    if p.y<0.9*ScrollBarY.Min then
+      ScrollBarY.Min:=Round(1.3*p.y);
     Tools[ActiveBtn.Tag].MouseMove(Sender,Shift,X,Y);
-    ScrollBarX.Position:=Round(ShiftX);
-    ScrollBarY.Position:=Round(ShiftY);
-    ShiftXEdit.Text:=floattostr(ShiftX);
-    ShiftYEdit.Text:=floattostr(ShiftY);
     PaintBox.Invalidate;
   end;
 end;
 
-procedure TForm1.ZoomEditKeyDown(Sender: TObject; var Key: Word;
+procedure TForm1.EditKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+var
+  Edit:TEdit;
+  i:integer;
 begin
+  Edit:=Sender as TEdit;
   if key=13 then begin
-    if not NormalTextZoom then begin
-      ZoomEdit.Text:=floattostr(100/zoom);
-      NormalTextZoom:=true;
-    end;
-    if strtofloat(ZoomEdit.Text)=0 then begin
-      ZoomEdit.Text:=floattostr(100/zoom);
-      NormalTextZoom:=true;
-    end;
-    zoom:=100/strtofloat(ZoomEdit.Text);
+    CheckString(ZoomEdit.Text);
+    CheckString(ShiftXEdit.Text);
+    CheckString(ShiftXEdit.Text);
+    if strtofloat(ZoomEdit.Text)=0 then
+      Update;
+    Screen.Zoom:=100/StrToFloat(ZoomEdit.Text);
+    Screen.Translation(Screen.Shift,
+      DoublePoint(StrToFloat(ShiftXEdit.Text),StrToFloat(ShiftYEdit.Text)));
     PaintBox.Invalidate;
   end;
-  if not(chr(key) in ['0'..'9',chr(VK_LEFT)..chr(VK_DOWN),chr(VK_DELETE),chr(VK_SHIFT)])
-  and (key<>8) and (key<>13) then
-    NormalTextZoom:=false;
 end;
 
 procedure TForm1.PaintBoxPaint(Sender: TObject);

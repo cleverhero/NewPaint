@@ -8,30 +8,63 @@ uses
   Classes, SysUtils, Math;
 
 type
-  DoublePoint = Record
+  TDoublePoint = Record
     x,y:Double;
   end;
 
-function WorldToScreen(a:DoublePoint):TPoint;
-function ScreenToWorld(a:TPoint):DoublePoint;
+function DoublePoint(AX, AY: Double): TDoublePoint;
+
+type
+  TChangeEvent = procedure of Object;
+
+  MyScreen = Class
+    Zoom:double;
+    Width,Height:integer;
+    MaxScreen,MinScreen,Shift:TDoublePoint;
+    OnChange:TChangeEvent;
+
+    function WorldToScreen(a:TDoublePoint):TPoint;
+    function ScreenToWorld(a:TPoint):TDoublePoint;
+    procedure Scale(k:Double;x,y:integer);
+    procedure Translation(ps,pf:TDoublePoint);
+  end;
 
 var
-  ShiftX,ShiftY,zoom:double;
-  AWidth,AHeight:integer;
-  maxScreen,minScreen:DoublePoint;
+  Screen:MyScreen;
 
 implementation
-
-function WorldToScreen(a:DoublePoint):TPoint;
+function DoublePoint(AX, AY: Double): TDoublePoint;
 begin
-  WorldToScreen:=Point(Round((a.x-ShiftX)/zoom),Round((a.y-ShiftY)/zoom));
+  DoublePoint.x:=AX;
+  DoublePoint.y:=AY;
 end;
 
-function ScreenToWorld(a:TPoint):DoublePoint;
+procedure MyScreen.Scale(k:Double;x,y:integer);
 begin
-  ScreenToWorld.x:=a.x*zoom+ShiftX;
-  ScreenToWorld.y:=a.y*zoom+ShiftY;
+  Shift:=DoublePoint(ScreenToWorld(Point(x,y)).x-x*Zoom*k,ScreenToWorld(Point(x,y)).y-y*Zoom*k);
+  Zoom:=Zoom*k;
+  OnChange;
 end;
 
+procedure MyScreen.Translation(ps,pf:TDoublePoint);
+begin
+  Shift.X+=pf.x-ps.x;
+  Shift.Y+=pf.y-ps.y;
+  OnChange;
+end;
+
+function MyScreen.WorldToScreen(a:TDoublePoint):TPoint;
+begin
+  WorldToScreen:=Point(Round((a.x-Shift.X)/Zoom),Round((a.y-Shift.Y)/Zoom));
+end;
+
+function MyScreen.ScreenToWorld(a:TPoint):TDoublePoint;
+begin
+  ScreenToWorld.x:=a.x*Zoom+Shift.X;
+  ScreenToWorld.y:=a.y*Zoom+Shift.Y;
+end;
+
+initialization
+  Screen:=MyScreen.Create;
 end.
 

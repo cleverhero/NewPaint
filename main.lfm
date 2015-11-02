@@ -1,10 +1,10 @@
 object Form1: TForm1
-  Left = 297
+  Left = 579
   Height = 600
-  Top = 165
+  Top = 288
   Width = 1008
   Caption = 'Paint'
-  ClientHeight = 580
+  ClientHeight = 575
   ClientWidth = 1008
   Constraints.MinHeight = 600
   KeyPreview = True
@@ -13,10 +13,10 @@ object Form1: TForm1
   OnKeyDown = FormKeyDown
   OnKeyUp = FormKeyUp
   OnResize = FormResize
-  LCLVersion = '1.2.6.0'
+  LCLVersion = '1.4.2.0'
   object PaintBox: TPaintBox
     Left = 184
-    Height = 559
+    Height = 554
     Top = 0
     Width = 803
     Align = alClient
@@ -24,11 +24,11 @@ object Form1: TForm1
   end
   object Panel: TPanel
     Left = 0
-    Height = 559
+    Height = 554
     Top = 0
     Width = 184
     Align = alLeft
-    ClientHeight = 559
+    ClientHeight = 554
     ClientWidth = 184
     TabOrder = 0
     object BtnClear: TButton
@@ -51,10 +51,10 @@ object Form1: TForm1
     end
     object ColorBox: TComboBox
       Left = 8
-      Height = 23
+      Height = 28
       Top = 524
       Width = 100
-      ItemHeight = 15
+      ItemHeight = 20
       ItemIndex = 0
       Items.Strings = (
         'Черный'
@@ -71,10 +71,10 @@ object Form1: TForm1
     end
     object SizeBox: TComboBox
       Left = 8
-      Height = 23
+      Height = 28
       Top = 472
       Width = 100
-      ItemHeight = 15
+      ItemHeight = 20
       ItemIndex = 1
       Items.Strings = (
         '1'
@@ -104,18 +104,18 @@ object Form1: TForm1
     end
     object ZoomLabel: TLabel
       Left = 8
-      Height = 15
+      Height = 20
       Top = 400
-      Width = 32
+      Width = 40
       Caption = 'Zoom'
       ParentColor = False
     end
     object ZoomEdit: TEdit
       Left = 8
-      Height = 23
+      Height = 28
       Top = 416
       Width = 32
-      OnKeyDown = ZoomEditKeyDown
+      OnKeyDown = EditKeyDown
       TabOrder = 3
       Text = '100'
     end
@@ -130,35 +130,35 @@ object Form1: TForm1
     end
     object ShiftXLabel: TLabel
       Left = 57
-      Height = 15
+      Height = 20
       Top = 400
-      Width = 59
+      Width = 75
       Caption = 'Сдвиг по X'
       ParentColor = False
     end
     object ShiftYLabel: TLabel
       Left = 120
-      Height = 15
+      Height = 20
       Top = 400
-      Width = 59
+      Width = 74
       Caption = 'Сдвиг по Y'
       ParentColor = False
     end
     object ShiftXEdit: TEdit
       Left = 61
-      Height = 23
+      Height = 28
       Top = 416
       Width = 55
-      OnKeyDown = ShiftXEditKeyDown
+      OnKeyDown = EditKeyDown
       TabOrder = 4
       Text = '0'
     end
     object ShiftYEdit: TEdit
       Left = 120
-      Height = 23
+      Height = 28
       Top = 416
       Width = 59
-      OnKeyDown = ShiftYEditKeyDown
+      OnKeyDown = EditKeyDown
       TabOrder = 5
       Text = '0'
     end
@@ -166,7 +166,7 @@ object Form1: TForm1
   object ScrollBarX: TScrollBar
     Left = 0
     Height = 21
-    Top = 559
+    Top = 554
     Width = 1008
     Align = alBottom
     Max = 1000
@@ -177,7 +177,7 @@ object Form1: TForm1
   end
   object ScrollBarY: TScrollBar
     Left = 987
-    Height = 559
+    Height = 554
     Top = 0
     Width = 21
     Align = alRight
