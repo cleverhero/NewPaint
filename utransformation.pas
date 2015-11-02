@@ -17,8 +17,11 @@ function ScreenToWorld(a:TPoint):DoublePoint;
 
 var
   ShiftX,ShiftY,zoom:double;
-  WidthCanvas,HeightCanvas:integer;
+  AWidth,AHeight:integer;
+  maxScreen,minScreen:DoublePoint;
+
 implementation
+
 function WorldToScreen(a:DoublePoint):TPoint;
 begin
   WorldToScreen:=Point(Round((a.x-ShiftX)/zoom),Round((a.y-ShiftY)/zoom));
